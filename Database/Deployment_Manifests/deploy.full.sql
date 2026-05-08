@@ -1,7 +1,7 @@
 SET DEFINE ON
 DEFINE APPLICATION_NAME = 'UTL_METADATA_SCRIPT'
 DEFINE DEPLOY_VERSION_MAJOR = '1'
-DEFINE DEPLOY_VERSION_MINOR = '0'
+DEFINE DEPLOY_VERSION_MINOR = '1'
 DEFINE DEPLOY_VERSION_PATCH = '0'
 DEFINE DEPLOY_COMMIT_HASH = '&&1'
 
@@ -50,9 +50,11 @@ BEGIN
    pkg_application.set_deploy_notes_p
    ( ip_application_name => '&&APPLICATION_NAME'
    , ip_notes => 
-Q'{1.0.0
+Q'{1.1.0
+* Add get_metadata_script function to PKG_METADATA_SCRIPT, which returns a pipelined table of CLOBs containing the generated metadata script. 
+1.0.0
 * UTL_METADATA_SCRIPT full/initial deploy
-** This application will contain utility procedures for working with metadata, such as generating SQL scripts to populate tables in an idempotent way. Useful for adding metadata to repositories.
+** This application contains utility procedures for working with metadata, such as generating SQL scripts to populate tables in an idempotent way. Useful for adding metadata to repositories.
 }'
    );
 END;

@@ -36,9 +36,9 @@ CREATE OR REPLACE PACKAGE BODY PKG_METADATA_SCRIPT AS
                          , ip_db_link      IN VARCHAR2 );
 
    --Functions and procedures
-   FUNCTION open_handle_f( ip_schema_name  IN VARCHAR2
-                         , ip_table_name   IN VARCHAR2
-                         , ip_db_link      IN VARCHAR2 )
+   FUNCTION open_handle_f( ip_table_name   IN VARCHAR2
+                         , ip_schema_name  IN VARCHAR2 DEFAULT NULL
+                         , ip_db_link      IN VARCHAR2 DEFAULT NULL)
      RETURN NUMBER
    IS
       c_max_open_handles CONSTANT NUMBER := 3;
@@ -52,11 +52,11 @@ CREATE OR REPLACE PACKAGE BODY PKG_METADATA_SCRIPT AS
         FROM gt_metadata_script;
    
       assert(v_open_handles <= c_max_open_handles,'open_handle_f: Maximum open statement handles exceeded.');
-      assert(ip_schema_name = UPPER(ip_schema_name), 'ip_schema_name must be upper case');
+      assert(ip_schema_name IS NULL OR ip_schema_name = UPPER(ip_schema_name), 'ip_schema_name must be upper case');
       assert(ip_table_name  = UPPER(ip_table_name), 'ip_table_name must be upper case');
       
       Initialize_p( ip_stmt_hndl    => v_statement_handle
-                  , ip_schema_name  => ip_schema_name
+                  , ip_schema_name  => NVL(ip_schema_name, USER)
                   , ip_table_name   => ip_table_name
                   , ip_db_link      => ip_db_link );
 
@@ -684,7 +684,41 @@ END; ]';
       COMMIT;
    END gen_filter_meta_scripts_p;
 
-   
+
+
+   FUNCTION get_metadata_script( ip_table_name   IN VARCHAR2
+                               , ip_schema_name  IN VARCHAR2 DEFAULT NULL
+                               , ip_db_link      IN VARCHAR2 DEFAULT NULL )
+       RETURN apex_t_clob PIPELINED
+   IS
+      PRAGMA AUTONOMOUS_TRANSACTION;
+      v_statement_handle NUMBER;
+   BEGIN
+      v_statement_handle := open_handle_f( ip_table_name  => ip_table_name
+                                         , ip_schema_name => ip_schema_name
+                                         , ip_db_link     => ip_db_link )
+      ;
+      GEN_META_SCRIPT_P(v_statement_handle);
+      GEN_DATA_SCRIPT_P(v_statement_handle)
+      ;
+      FOR REC IN (SELECT *
+                    FROM 
+                   TABLE(APEX_STRING.SPLIT_CLOBS (p_str   => (SELECT DATA_SCRIPT FROM GT_METADATA_SCRIPT WHERE statement_handle = v_statement_handle)
+                                                --  p_sep   IN VARCHAR2    DEFAULT apex_application.LF,
+                                                --  p_limit IN PLS_INTEGER DEFAULT NULL 
+                                                  )
+                        ) )
+      LOOP
+         PIPE ROW( REC.COLUMN_VALUE );
+      END LOOP;
+      --close the handle and clean up
+      close_handle(v_statement_handle);
+   EXCEPTION
+      WHEN NO_DATA_NEEDED THEN
+         close_handle(v_statement_handle);
+   END get_metadata_script;
+
+
 END PKG_METADATA_SCRIPT;
 
 /
