@@ -398,7 +398,7 @@ Q'[DECLARE
    IS
    BEGIN
       v_output_clob :=   'DECLARE'||CHR(10)
-                       ||'   TYPE t_:source_table: IS TABLE OF :source_schema:.:source_table:%ROWTYPE INDEX BY BINARY_INTEGER;'
+                       ||'   TYPE t_:source_table: IS TABLE OF :source_table:%ROWTYPE INDEX BY BINARY_INTEGER;'
                        ||CHR(10)
                        ||'   :collection_name: t_:source_table:;'
                        ||CHR(10)
@@ -427,7 +427,7 @@ Q'|-----------------------------------------------------------------------------
 -------------------------------------------------------------------------------- 
 -------------------------------------------------------------------------------- 
    FORALL i IN :collection_name:.FIRST..:collection_name:.LAST
-      MERGE INTO :source_schema:.:source_table: A
+      MERGE INTO :source_table: A
          USING (SELECT NULL FROM dual)
             ON (
 :on_clause:
