@@ -95,4 +95,6 @@ SET DEFINE ON
 EXEC pkg_application.validate_objects_p(ip_application_name => '&&APPLICATION_NAME');
 EXEC pkg_application.set_deployment_complete_p(ip_application_name => '&&APPLICATION_NAME');
 
+PROMPT  &&APPLICATION_NAME deployment complete
+
 SPOOL OFF
