@@ -79,17 +79,17 @@ EXEC pkg_application.validate_sys_privs_p   (ip_application_name => '&&APPLICATI
 
 --Tables
 Prompt Creating Tables
-@@../Tables/GT_METADATA_SCRIPT.sql
-@@../Tables/GT_METADATA_SCRIPT_FILTER_COL.sql
-@@../Tables/GT_METADATA_SF_COL_VAL.sql
+@@../tables/GT_METADATA_SCRIPT.sql
+@@../tables/GT_METADATA_SCRIPT_FILTER_COL.sql
+@@../tables/GT_METADATA_SF_COL_VAL.sql
 
 --Package Specifications
 Prompt Creating Package Specifications
-@@../Packages/PKG_METADATA_SCRIPT.pks
+@@../packages/PKG_METADATA_SCRIPT.pks
 
 --Package Bodies
 Prompt Creating Package Bodies
-@@../Packages/PKG_METADATA_SCRIPT.pkb
+@@../packages/PKG_METADATA_SCRIPT.pkb
 
 SET DEFINE ON
 EXEC pkg_application.validate_objects_p(ip_application_name => '&&APPLICATION_NAME');

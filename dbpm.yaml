@@ -1,0 +1,14 @@
+package:
+  name: UTL_METADATA_SCRIPT
+  version: "1.1.0"
+  description: "Utility for generating metadata scripts for data already in tables."
+  license: Apache-2.0
+
+database:
+  platform: oracle
+
+core:
+  minimum_version: "3.0.0"
+
+scripts:
+  install: deployment_manifests/deploy.sql
