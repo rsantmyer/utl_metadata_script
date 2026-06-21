@@ -12,3 +12,7 @@ core:
 
 scripts:
   install: deployment_manifests/deploy.sql
+
+publish:
+  group: io.github.rsantmyer.database
+  artifact_id: utl_metadata_script
